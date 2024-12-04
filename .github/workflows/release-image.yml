@@ -1,4 +1,4 @@
-name: release-verifiable-image
+name: release-ci-image
 on:
   push:
     branches:
