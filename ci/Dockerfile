@@ -125,7 +125,7 @@ RUN cargo install subkey
 # contracts ci
 # Download the latest `substrate-contracts-node` binary
 RUN	cargo install --git https://github.com/use-ink/substrate-contracts-node \
-    --branch master --force
+    --branch main --force
 
 # We use `estuary` as a lightweight cargo registry in the CI to test if
 # publishing `cargo-contract` to it and installing it from there works.
