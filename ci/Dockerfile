@@ -127,10 +127,6 @@ RUN cargo install subkey
 RUN	cargo install --git https://github.com/use-ink/substrate-contracts-node \
     --branch main --force
 
-# We use `estuary` as a lightweight cargo registry in the CI to test if
-# publishing `cargo-contract` to it and installing it from there works.
-RUN	cargo install --git https://github.com/onelson/estuary.git --force --locked
-
 # ink-ci-linux
 # Needed for running commands in parallel, without overlapping output.
 # gnupg is only needed to verify the signature of the codecov uploader.
@@ -145,7 +141,6 @@ RUN	cargo install grcov rust-covfix xargo
 
 # parity-scale-codec
 RUN	cargo +nightly-${RUST_NIGHTLY_VERSION} install grcov rust-covfix xargo dylint-link
-
 
 ### codecov
 
@@ -182,9 +177,7 @@ RUN curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov && \
 RUN rustup show && \
     cargo --version && \
     #contracts-ci
-    yarn --version && \
     echo $( substrate-contracts-node --version | awk 'NF' ) && \
-    estuary --version && \
     # inc-ci-linux
     cargo-contract --version
 # ink-waterfall-ci
