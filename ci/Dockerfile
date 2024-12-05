@@ -42,7 +42,7 @@ RUN set -eux; \
     libssl-dev make cmake  \
     git pkg-config curl wget time rhash ca-certificates jq \
     lsof git-restore-mtime \
-    bzip2 xz-utils zstd unzip gnupg
+    bzip2 xz-utils zstd unzip gnupg protobuf-compiler
 
 # base | add llvm repo, clang and dependencies
 ARG DISTRO_CODENAME="bullseye"
