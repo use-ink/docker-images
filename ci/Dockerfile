@@ -125,7 +125,7 @@ RUN cargo install subkey
 # contracts ci
 # Download the latest `substrate-contracts-node` binary
 RUN	cargo install --git https://github.com/use-ink/substrate-contracts-node \
-    --branch main --force
+    --branch upstream-master --force
 
 # ink-ci-linux
 # Needed for running commands in parallel, without overlapping output.
