@@ -3,7 +3,6 @@ FROM docker.io/library/debian:bullseye-20241111-slim
 ### meta ###
 # Static vars, dynamic vars can be found in the build-args file. Variables were moved for caching.
 ENV RESTIC_VERSION="0.16.1" \
-    LLVM_VERSION="15" \
     MINIO_VERSION="2023-04-06T16-51-10Z" \
     RUST_STABLE_VERSION=1.81.0 \
     RUST_NIGHTLY_VERSION=2024-09-11 \
@@ -18,8 +17,6 @@ ENV SHELL=/bin/bash \
     RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH \
-    CC=clang-${LLVM_VERSION} \
-    CXX=clang-${LLVM_VERSION} \
     RUST_BACKTRACE=1
 
 ### base ###
@@ -31,34 +28,39 @@ RUN groupadd -g 1000 nonroot && \
 COPY ci/cargo-config /root/.cargo/config
 COPY ci/cargo-config /home/nonroot/.cargo/config
 
-# base | replace REPLACEME in the cargo configs with the real llvm version
-RUN sed -i "s/REPLACEME/${LLVM_VERSION}/g" /root/.cargo/config && \
-    sed -i "s/REPLACEME/${LLVM_VERSION}/g" /home/nonroot/.cargo/config
-
 # base | install tools and dependencies
 RUN set -eux; \
     apt-get -y update; \
     apt-get install -y --no-install-recommends \
-    libssl-dev make cmake  \
+    libssl-dev make build-essential \
     git pkg-config curl wget time rhash ca-certificates jq \
     lsof git-restore-mtime \
     bzip2 xz-utils zstd unzip gnupg protobuf-compiler
 
+RUN wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
+      tar --strip-components=1 -xz -C /usr/local
+
 # base | add llvm repo, clang and dependencies
 ARG DISTRO_CODENAME="bullseye"
-RUN echo ${DISTRO_CODENAME} ${LLVM_VERSION}
-RUN wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc && \
-    echo "deb http://apt.llvm.org/${DISTRO_CODENAME}/ llvm-toolchain-${DISTRO_CODENAME}-${LLVM_VERSION} main" >> /etc/apt/sources.list.d/llvm-toochain-${DISTRO_CODENAME}-${LLVM_VERSION}.list; \
-    echo "deb-src http://apt.llvm.org/${DISTRO_CODENAME}/ llvm-toolchain-${DISTRO_CODENAME}-${LLVM_VERSION} main" >> /etc/apt/sources.list.d/llvm-toochain-${DISTRO_CODENAME}-${LLVM_VERSION}.list; \
-    apt-get -y update; \
-    apt-get install -y --no-install-recommends \
-    clang-${LLVM_VERSION} lldb-${LLVM_VERSION} lld-${LLVM_VERSION} libclang-${LLVM_VERSION}-dev
+RUN echo ${DISTRO_CODENAME}
 
-# base | set a link to clang
-RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang-${LLVM_VERSION} 100
 
-# base | set a link to ldd
-RUN update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld-${LLVM_VERSION} 100
+# install revive
+
+RUN curl https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc
+RUN chmod u+x /usr/bin/solc
+RUN solc --version
+
+RUN apt-get install -y --no-install-recommends ninja-build
+RUN ninja --version
+
+RUN git clone https://github.com/paritytech/revive.git --depth 1 && \
+    cd revive && \
+    bash build-llvm.sh && \
+    export PATH=${PWD}/llvm18.0/bin:$PATH \
+    make install-bin
+
+RUN resolc --version
 
 # base | install rustup, use minimum components
 RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init" \
@@ -104,6 +106,10 @@ RUN rustup target add wasm32-unknown-unknown \
 RUN rustup component add rustfmt clippy rust-src \
     --toolchain "nightly-${RUST_NIGHTLY_VERSION}"
 RUN rustup run nightly-${RUST_NIGHTLY_VERSION} cargo install cargo-dylint dylint-link
+
+
+
+
 
 RUN cargo install cargo-spellcheck cargo-nextest --locked
 
