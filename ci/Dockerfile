@@ -58,6 +58,7 @@ RUN git clone https://github.com/paritytech/revive.git --depth 1 && \
     cd revive && \
     bash build-llvm.sh && \
     export PATH=${PWD}/llvm18.0/bin:$PATH \
+    export PATH=/builds/revive/llvm18.0/bin/:$PATH \
     make install-bin
 
 RUN resolc --version
