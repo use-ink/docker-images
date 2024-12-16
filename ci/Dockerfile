@@ -35,7 +35,8 @@ RUN set -eux; \
     libssl-dev make build-essential \
     git pkg-config curl wget time rhash ca-certificates jq \
     lsof git-restore-mtime \
-    bzip2 xz-utils zstd unzip gnupg protobuf-compiler
+    bzip2 xz-utils zstd unzip gnupg protobuf-compiler \
+    libclang-dev # needed for `cargo-spellcheck`
 
 RUN wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
       tar --strip-components=1 -xz -C /usr/local
@@ -89,7 +90,9 @@ RUN rustup component add rustfmt clippy rust-src \
     --toolchain "nightly-${RUST_NIGHTLY_VERSION}"
 RUN rustup run nightly-${RUST_NIGHTLY_VERSION} cargo install cargo-dylint dylint-link
 
-RUN cargo install cargo-spellcheck cargo-nextest --locked
+RUN cargo install cargo-spellcheck --locked
+
+RUN cargo install cargo-nextest --locked
 
 # generic ci | install zepter
 RUN cargo install zepter --locked --version 0.15.0
