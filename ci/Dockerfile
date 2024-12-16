@@ -44,8 +44,7 @@ RUN wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" |
 ARG DISTRO_CODENAME="bullseye"
 RUN echo ${DISTRO_CODENAME}
 
-
-# install revive
+# install paritytech/revive with its dependencies
 
 RUN curl https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc
 RUN chmod u+x /usr/bin/solc
@@ -56,9 +55,10 @@ RUN ninja --version
 
 RUN git clone https://github.com/paritytech/revive.git --depth 1 && \
     cd revive && \
-    bash build-llvm.sh && \
-    export PATH=${PWD}/llvm18.0/bin:$PATH \
-    export PATH=/builds/revive/llvm18.0/bin/:$PATH \
+    bash build-llvm.sh
+
+RUN export PATH=${PWD}/llvm18.0/bin:$PATH && \
+    export PATH=/builds/revive/llvm18.0/bin/:$PATH && \
     make install-bin
 
 RUN resolc --version
