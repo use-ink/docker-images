@@ -36,7 +36,10 @@ RUN set -eux; \
     git pkg-config curl wget time rhash ca-certificates jq \
     lsof git-restore-mtime \
     bzip2 xz-utils zstd unzip gnupg protobuf-compiler \
-    libclang-dev # needed for `cargo-spellcheck`
+    # needed for `paritytech/revive`
+    libtinfo-dev \
+    # needed for `cargo-spellcheck`
+    libclang-dev
 
 RUN wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
       tar --strip-components=1 -xz -C /usr/local
