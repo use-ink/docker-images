@@ -107,7 +107,7 @@ RUN cargo install zepter --locked --version 0.15.0
 # contracts ci
 # Install the latest `cargo-contract`
 RUN	cargo install --git https://github.com/paritytech/cargo-contract \
-    --locked --branch master --force
+    --locked --branch cmichi-remove-wasm-default-to-revive --force
 
 # contracts ci
 RUN cargo install subkey
