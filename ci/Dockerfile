@@ -64,7 +64,7 @@ ARG GH_TOOL_VERSION="2.54.0"
 RUN wget "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh_${GH_TOOL_VERSION}_linux_amd64.deb" && \
     dpkg -i "gh_${GH_TOOL_VERSION}_linux_amd64.deb"
 
-ARG RUST_STABLE_VERSION="1.81.0"
+ARG RUST_STABLE_VERSION="1.83.0"
 
 # generic ci | install stable rust
 RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal && \
@@ -141,14 +141,12 @@ RUN resolc --version
 # gnupg is only needed to verify the signature of the codecov uploader.
 RUN	apt-get install -y --no-install-recommends parallel
 
-# ink-ci-linux
 # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
 # We require `xargo` so that `miri` runs properly
 RUN	cargo install grcov rust-covfix xargo
 
-# codecov from ink-ci-linux
+# codecov
 
-# parity-scale-codec
 RUN	cargo +nightly-${RUST_NIGHTLY_VERSION} install grcov rust-covfix xargo dylint-link
 
 ### codecov
@@ -167,7 +165,7 @@ RUN	curl --remote-name --silent https://uploader.codecov.io/${CODECOV_UPLOADER_V
     mv codecov /usr/local/bin/codecov && \
     rm -f codecov.SHA256SUM codecov.SHA256SUM.sig
 
-#codecov-cli
+# codecov-cli
 ARG CODECOV_CLI_VERSION="v0.6.0"
 
 RUN curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov && \
@@ -180,7 +178,6 @@ RUN curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov && \
     rm -f codecov.SHA256SUM codecov.SHA256SUM.sig
 
 ### finalize ###
-
 
 # finalize | versions
 RUN rustup show && \
