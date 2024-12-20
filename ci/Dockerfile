@@ -135,9 +135,7 @@ RUN git clone https://github.com/paritytech/revive.git --depth 1 && \
 
 RUN cd revive && export PATH=${PWD}/llvm18.0/bin:$PATH && \
     export PATH=/builds/revive/llvm18.0/bin/:$PATH && \
-    make install-bin \
-
-RUN rm -rf revive/
+    make install-bin && cd ../ && rm -rf revive
 
 RUN resolc --version
 
