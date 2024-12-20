@@ -109,7 +109,7 @@ RUN cargo install zepter --locked --version 0.15.0
 
 # contracts ci
 # Install the latest `cargo-contract`
-RUN	cargo install --git https://github.com/paritytech/cargo-contract \
+RUN cargo install --git https://github.com/paritytech/cargo-contract \
     --locked --branch cmichi-remove-wasm-default-to-revive --force
 
 # contracts ci
@@ -117,7 +117,7 @@ RUN cargo install subkey
 
 # contracts ci
 # Download the latest `substrate-contracts-node` binary
-RUN	cargo install --git https://github.com/use-ink/substrate-contracts-node \
+RUN cargo install --git https://github.com/use-ink/substrate-contracts-node \
     --branch upstream-master --force
 
 # install paritytech/revive with its dependencies
@@ -135,7 +135,9 @@ RUN git clone https://github.com/paritytech/revive.git --depth 1 && \
 
 RUN cd revive && export PATH=${PWD}/llvm18.0/bin:$PATH && \
     export PATH=/builds/revive/llvm18.0/bin/:$PATH && \
-    make install-bin
+    make install-bin \
+
+RUN rm -rf revive/
 
 RUN resolc --version
 
