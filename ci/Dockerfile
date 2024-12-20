@@ -76,10 +76,8 @@ RUN ln -s "/usr/local/rustup/toolchains/${RUST_STABLE_VERSION}-x86_64-unknown-li
 # generic ci | install additional rustup components for the ci tests
 RUN rustup component add rust-src rustfmt clippy
 
-# generic ci | install wasm toolchain for the default stable toolchain
-RUN rustup target add wasm32-unknown-unknown
-
-ARG RUST_NIGHTLY_VERSION="2024-09-05"
+# generic ci | install asm toolchain for the default stable toolchain
+RUN rustup target add riscv64imac-unknown-none-elf
 
 # generic ci | install specific rust nightly, default is stable, use minimum components
 RUN rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal --component rustfmt rust-analyzer
@@ -87,7 +85,7 @@ RUN rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal
 # generic ci | "alias" pinned nightly toolchain as generic nightly
 RUN ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu
 
-RUN rustup target add wasm32-unknown-unknown \
+RUN rustup target add riscv64imac-unknown-none-elf \
     --toolchain "nightly-${RUST_NIGHTLY_VERSION}"
 RUN rustup component add rustfmt clippy rust-src \
     --toolchain "nightly-${RUST_NIGHTLY_VERSION}"
