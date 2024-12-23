@@ -74,7 +74,7 @@ RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal && \
 RUN ln -s "/usr/local/rustup/toolchains/${RUST_STABLE_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/stable-x86_64-unknown-linux-gnu
 
 # generic ci | install additional rustup components for the ci tests
-RUN rustup component add rust-src rustfmt clippy
+RUN rustup component add rust-src rustfmt clippy llvm-tools-preview rustc-dev
 
 # generic ci | install asm toolchain for the default stable toolchain
 RUN rustup target add riscv64imac-unknown-none-elf
