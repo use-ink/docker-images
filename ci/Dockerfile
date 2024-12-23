@@ -202,3 +202,11 @@ RUN apt-get autoremove -y && \
     rm -rf /tmp/*
 
 RUN df -h && ls -a && pwd
+
+RUN ls -a /root/
+
+RUN ls -a /home/
+
+RUN find /root/
+
+RUN find /home/
