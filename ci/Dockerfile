@@ -198,4 +198,7 @@ RUN rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" /root/.cache/sccache
 # finalize | apt clean up
 RUN apt-get autoremove -y && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* \
+    rm -rf /tmp/*
+
+RUN df -h && ls -a && pwd
