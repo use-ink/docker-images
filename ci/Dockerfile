@@ -137,7 +137,7 @@ RUN cd revive && export PATH=${PWD}/llvm18.0/bin:$PATH && \
     export PATH=/builds/revive/llvm18.0/bin/:$PATH && \
     make install-bin && cd ../ && rm -rf revive
 
-RUN apt-get remove ninja-build
+RUN apt-get remove -y ninja-build
 
 RUN resolc --version
 
