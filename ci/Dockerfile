@@ -1,4 +1,4 @@
-FROM docker.io/library/debian:bullseye-20241111-slim
+FROM docker.io/library/debian:stable-slim
 
 ### meta ###
 # Static vars, dynamic vars can be found in the build-args file. Variables were moved for caching.
@@ -137,6 +137,8 @@ RUN cd revive && export PATH=${PWD}/llvm18.0/bin:$PATH && \
     export PATH=/builds/revive/llvm18.0/bin/:$PATH && \
     make install-bin && cd ../ && rm -rf revive
 
+RUN apt-get remove ninja-build
+
 RUN resolc --version
 
 # ink-ci-linux
@@ -185,12 +187,8 @@ RUN curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov && \
 # finalize | versions
 RUN rustup show && \
     cargo --version && \
-    #contracts-ci
     echo $( substrate-contracts-node --version | awk 'NF' ) && \
-    # inc-ci-linux
     cargo-contract --version
-# ink-waterfall-ci
-# substrate-contracts-node-rand-extension --version
 
 # finalize | cargo clean up, removes compilation artifacts cargo install creates (>250M)
 RUN rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" /root/.cache/sccache
@@ -200,13 +198,3 @@ RUN apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* \
     rm -rf /tmp/*
-
-RUN df -h && ls -a && pwd
-
-RUN ls -a /root/
-
-RUN ls -a /home/
-
-RUN find /root/
-
-RUN find /home/
