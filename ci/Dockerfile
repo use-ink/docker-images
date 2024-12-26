@@ -24,8 +24,8 @@ ENV SHELL=/bin/bash \
 RUN groupadd -g 1000 nonroot && \
     useradd -u 1000 -g 1000 -s /bin/bash -m nonroot
 
-COPY cargo-config /root/.cargo/config
-COPY cargo-config /home/nonroot/.cargo/config
+COPY ci/cargo-config /root/.cargo/config
+COPY ci/cargo-config /home/nonroot/.cargo/config
 
 # base | install tools and dependencies
 RUN set -eux; \
@@ -62,14 +62,12 @@ RUN curl -O "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh
 ARG RUST_STABLE_VERSION="1.83.0"
 
 # generic ci | install stable rust
-RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal && \
+RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal\
+      --component rustfmt clippy && \
     rustup default "${RUST_STABLE_VERSION}"
 
 # generic ci | "alias" pinned stable toolchain as generic stable
 RUN ln -s "/usr/local/rustup/toolchains/${RUST_STABLE_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/stable-x86_64-unknown-linux-gnu
-
-# generic ci | install additional rustup components for the ci tests
-RUN rustup component add rust-src rustfmt clippy
 
 # generic ci | install asm toolchain for the default stable toolchain
 RUN rustup target add riscv64imac-unknown-none-elf
