@@ -78,7 +78,9 @@ RUN rustup target add riscv64imac-unknown-none-elf
 RUN rustup target add wasm32-unknown-unknown
 
 # generic ci | install specific rust nightly, default is stable, use minimum components
-RUN rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal --component rustfmt rust-analyzer llvm-tools rustc-dev
+RUN rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
+    --component rustfmt clippy rust-analyzer llvm-tools rustc-dev \
+    rust-src llvm-tools-preview
 
 # generic ci | "alias" pinned nightly toolchain as generic nightly
 RUN ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu
@@ -87,8 +89,8 @@ RUN rustup target add riscv64imac-unknown-none-elf \
     --toolchain "nightly-${RUST_NIGHTLY_VERSION}"
 #RUN rustup target add wasm32-unknown-unknown \
     #--toolchain "nightly-${RUST_NIGHTLY_VERSION}"
-RUN rustup component add rustfmt clippy rust-src \
-    --toolchain "nightly-${RUST_NIGHTLY_VERSION}"
+#RUN rustup component add rustfmt clippy rust-src rustc-dev llvm-tools-preview \
+    #--toolchain "nightly-${RUST_NIGHTLY_VERSION}"
 RUN rustup run nightly-${RUST_NIGHTLY_VERSION} cargo install cargo-dylint dylint-link
 
 RUN cargo install cargo-spellcheck --locked
