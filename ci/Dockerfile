@@ -1,4 +1,4 @@
-FROM docker.io/library/debian:stable-slim
+FROM docker.io/library/debian:unstable-slim
 
 ### meta ###
 # Static vars, dynamic vars can be found in the build-args file. Variables were moved for caching.
@@ -7,8 +7,7 @@ ENV RESTIC_VERSION="0.16.1" \
     RUST_STABLE_VERSION=1.81.0 \
     RUST_NIGHTLY_VERSION=2024-11-28 \
     CODECOV_UPLOADER_VERSION=v0.7.3 \
-    CODECOV_CLI_VERSION=v0.6.0 \
-    DISTRO_CODENAME=bullseye
+    CODECOV_CLI_VERSION=v0.6.0
 
 WORKDIR /builds
 
@@ -44,10 +43,6 @@ RUN set -eux; \
 RUN wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
       tar --strip-components=1 -xz -C /usr/local
 
-# base | add llvm repo, clang and dependencies
-ARG DISTRO_CODENAME="bullseye"
-RUN echo ${DISTRO_CODENAME}
-
 # base | install rustup, use minimum components
 RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init" \
     -o rustup-init && \
@@ -62,7 +57,7 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
 ARG GH_TOOL_VERSION="2.54.0"
 
 RUN wget "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh_${GH_TOOL_VERSION}_linux_amd64.deb" && \
-    dpkg -i "gh_${GH_TOOL_VERSION}_linux_amd64.deb"
+    dpkg -i "gh_${GH_TOOL_VERSION}_linux_amd64.deb" && rm "gh_${GH_TOOL_VERSION}_linux_amd64.deb"
 
 ARG RUST_STABLE_VERSION="1.83.0"
 
@@ -191,10 +186,16 @@ RUN rustup show && \
     cargo-contract --version
 
 # finalize | cargo clean up, removes compilation artifacts cargo install creates (>250M)
-RUN rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" /root/.cache/sccache
+RUN rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git"
+
+RUN apt-get remove -y python3
+#python3-minimal python3.11 python3.11-minimal
+#RUN apt-get remove -y python3 cpp cpp-12 g++ g++-12 gcc gcc-12 python3-minimal python3.11 python3.11-minimal
 
 # finalize | apt clean up
 RUN apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* \
+    rm -rf /usr/local/doc \
+    rm -rf /usr/lib/llvm-11 \
     rm -rf /tmp/*
