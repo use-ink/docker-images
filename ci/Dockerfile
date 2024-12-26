@@ -40,9 +40,6 @@ RUN set -eux; \
     # needed for `cargo-spellcheck`
     libclang-dev
 
-RUN wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
-      tar --strip-components=1 -xz -C /usr/local
-
 # base | install rustup, use minimum components
 RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init" \
     -o rustup-init && \
@@ -56,7 +53,7 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
 
 ARG GH_TOOL_VERSION="2.54.0"
 
-RUN curl -O "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh_${GH_TOOL_VERSION}_linux_amd64.deb" && \
+RUN wget "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh_${GH_TOOL_VERSION}_linux_amd64.deb" && \
     dpkg -i "gh_${GH_TOOL_VERSION}_linux_amd64.deb" && rm "gh_${GH_TOOL_VERSION}_linux_amd64.deb"
 
 ARG RUST_STABLE_VERSION="1.83.0"
@@ -118,16 +115,18 @@ RUN cargo install --git https://github.com/use-ink/substrate-contracts-node \
 # install paritytech/revive with its dependencies
 
 RUN curl https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc && \
-    chmod u+x /usr/bin/solc
-
-RUN apt-get install -y --no-install-recommends ninja-build && \
+    chmod u+x /usr/bin/solc && \
+    wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
+      tar --strip-components=1 -xz -C /usr/local && \
+    apt-get install -y --no-install-recommends ninja-build && \
     git clone https://github.com/paritytech/revive.git --depth 1 && \
     cd revive && \
     bash build-llvm.sh && \
     export PATH=${PWD}/llvm18.0/bin:$PATH && \
     export PATH=/builds/revive/llvm18.0/bin/:$PATH && \
     make install-bin && cd ../ && rm -rf revive && \
-    apt-get remove -y ninja-build
+    apt-get remove -y ninja-build && \
+    rm -rf /usr/local/share/cmake-3.20
 
 #RUN resolc --version
 
