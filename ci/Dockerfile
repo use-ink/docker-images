@@ -60,7 +60,7 @@ ARG RUST_STABLE_VERSION="1.83.0"
 
 # generic ci | install stable rust
 RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal\
-      --component rustfmt clippy && \
+      --component rustfmt clippy rust-src && \
     rustup default "${RUST_STABLE_VERSION}"
 
 # generic ci | "alias" pinned stable toolchain as generic stable
