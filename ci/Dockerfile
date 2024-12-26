@@ -1,4 +1,4 @@
-FROM docker.io/library/debian:unstable-slim
+FROM docker.io/library/debian:stable-slim
 
 ### meta ###
 # Static vars, dynamic vars can be found in the build-args file. Variables were moved for caching.
@@ -32,7 +32,7 @@ RUN set -eux; \
     apt-get -y update; \
     apt-get install -y --no-install-recommends \
     libssl-dev make build-essential \
-    git pkg-config curl time rhash ca-certificates jq \
+    git pkg-config curl wget time rhash ca-certificates jq \
     lsof git-restore-mtime \
     bzip2 xz-utils zstd unzip gnupg protobuf-compiler \
     # needed for `paritytech/revive`
