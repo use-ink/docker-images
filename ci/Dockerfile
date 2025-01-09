@@ -1,13 +1,8 @@
 FROM docker.io/library/debian:stable-slim
 
 ### meta ###
-# Static vars, dynamic vars can be found in the build-args file. Variables were moved for caching.
-ENV RESTIC_VERSION="0.16.1" \
-    MINIO_VERSION="2023-04-06T16-51-10Z" \
-    RUST_STABLE_VERSION=1.83.0 \
-    RUST_NIGHTLY_VERSION=2024-11-01 \
-    CODECOV_UPLOADER_VERSION=v0.7.3 \
-    CODECOV_CLI_VERSION=v0.6.0
+ENV RUST_STABLE_VERSION=1.83.0 \
+    RUST_NIGHTLY_VERSION=2024-11-28
 
 WORKDIR /builds
 
