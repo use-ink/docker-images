@@ -75,10 +75,6 @@ RUN ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-x86_64-u
 
 RUN rustup target add riscv64imac-unknown-none-elf \
     --toolchain "nightly-${RUST_NIGHTLY_VERSION}"
-#RUN rustup target add wasm32-unknown-unknown \
-    #--toolchain "nightly-${RUST_NIGHTLY_VERSION}"
-#RUN rustup component add rustfmt clippy rust-src rustc-dev llvm-tools-preview \
-    #--toolchain "nightly-${RUST_NIGHTLY_VERSION}"
 RUN rustup run nightly-${RUST_NIGHTLY_VERSION} cargo install cargo-dylint dylint-link
 
 RUN cargo install cargo-spellcheck --locked
@@ -88,26 +84,17 @@ RUN cargo install cargo-nextest --locked
 # generic ci | install zepter
 RUN cargo install zepter --locked --version 0.15.0
 
-# contracts ci
-# `cargo-dylint` and `dylint-link` are dependencies needed to run `cargo-contract`.
-#RUN	cargo install cargo-dylint dylint-link
-
-# contracts ci
-# Install the latest `cargo-contract`
 RUN cargo install --git https://github.com/paritytech/cargo-contract \
     --locked --branch cmichi-remove-wasm-default-to-revive
 
-# contracts ci
 RUN cargo install subkey
 
-# contracts ci
-# Download the latest `substrate-contracts-node` binary
+# Download the `substrate-contracts-node` binary in a version that is compatible
+# to the `ink` master.
 RUN cargo install --git https://github.com/use-ink/substrate-contracts-node \
     --rev fad777f53ba2fcf8a90646a5c516015c63ad24be --force
-    #--branch upstream-master --force
 
-# install paritytech/revive with its dependencies
-
+# Install paritytech/revive with its dependencies
 RUN curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc && \
     chmod u+x /usr/bin/solc && \
     wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
@@ -122,12 +109,6 @@ RUN curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-
     apt-get remove -y ninja-build && \
     rm -rf /usr/local/share/cmake-3.20
 
-#RUN resolc --version
-
-# ink-ci-linux
-# Needed for running commands in parallel, without overlapping output.
-# gnupg is only needed to verify the signature of the codecov uploader.
-#RUN	apt-get install -y --no-install-recommends parallel
 
 # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
 # We require `xargo` so that `miri` runs properly
@@ -167,9 +148,6 @@ RUN curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov && \
 
 ### finalize ###
 
-# finalize | cargo clean up, removes compilation artifacts cargo install creates (>250M)
-#python3-minimal python3.11 python3.11-minimal
-#RUN apt-get remove -y python3 cpp cpp-12 g++ g++-12 gcc gcc-12 python3-minimal python3.11 python3.11-minimal
 # finalize | apt clean up
 RUN rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
     apt-get remove -y python3 && \
