@@ -109,17 +109,12 @@ RUN curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-
     apt-get remove -y ninja-build && \
     rm -rf /usr/local/share/cmake-3.20
 
-
 # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
 # We require `xargo` so that `miri` runs properly
 RUN	cargo install grcov rust-covfix xargo
 
 # codecov
-
 RUN	cargo +nightly-${RUST_NIGHTLY_VERSION} install grcov rust-covfix xargo dylint-link
-
-### codecov
-
 RUN curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --import
 
 # codecov uploader
