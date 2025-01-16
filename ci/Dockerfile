@@ -1,7 +1,7 @@
 FROM docker.io/library/debian:stable-slim
 
 ### meta ###
-ENV RUST_STABLE_VERSION=1.83.0 \
+ENV RUST_STABLE_VERSION=1.84.0 \
     RUST_NIGHTLY_VERSION=2024-11-28
 
 WORKDIR /builds
@@ -103,11 +103,12 @@ RUN cargo install subkey
 # contracts ci
 # Download the latest `substrate-contracts-node` binary
 RUN cargo install --git https://github.com/use-ink/substrate-contracts-node \
-    --branch upstream-master --force
+    --rev fad777f53ba2fcf8a90646a5c516015c63ad24be --force
+    #--branch upstream-master --force
 
 # install paritytech/revive with its dependencies
 
-RUN curl https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc && \
+RUN curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc && \
     chmod u+x /usr/bin/solc && \
     wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
       tar --strip-components=1 -xz -C /usr/local && \
