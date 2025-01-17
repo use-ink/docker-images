@@ -102,10 +102,11 @@ RUN curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-
     apt-get install -y --no-install-recommends ninja-build && \
     git clone https://github.com/paritytech/revive.git --depth 1 && \
     cd revive && \
-    bash build-llvm.sh && \
-    export PATH=${PWD}/llvm18.0/bin:$PATH && \
-    export PATH=/builds/revive/llvm18.0/bin/:$PATH && \
-    make install-bin && cd ../ && rm -rf revive && \
+    make install-llvm && \
+    export LLVM_SYS_181_PREFIX=${PWD}/target-llvm/gnu/target-final && \
+    make install-bin && \
+    resolc --version && \
+    cd ../ && rm -rf revive && \
     apt-get remove -y ninja-build && \
     rm -rf /usr/local/share/cmake-3.20
 
