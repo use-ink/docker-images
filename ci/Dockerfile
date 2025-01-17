@@ -81,21 +81,9 @@ RUN cargo install cargo-spellcheck --locked
 
 RUN cargo install cargo-nextest --locked
 
-# generic ci | install zepter
-RUN cargo install zepter --locked --version 0.15.0
-
-RUN cargo install --git https://github.com/paritytech/cargo-contract \
-    --locked --branch cmichi-remove-wasm-default-to-revive
-
-RUN cargo install subkey
-
-# Download the `substrate-contracts-node` binary in a version that is compatible
-# to the `ink` master.
-RUN cargo install --git https://github.com/use-ink/substrate-contracts-node \
-    --rev fad777f53ba2fcf8a90646a5c516015c63ad24be --force
-
 # Install paritytech/revive with its dependencies
-RUN curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc && \
+RUN apt-get install -y --no-install-recommends clang lld && \
+    curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc && \
     chmod u+x /usr/bin/solc && \
     wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
       tar --strip-components=1 -xz -C /usr/local && \
@@ -109,6 +97,19 @@ RUN curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-
     cd ../ && rm -rf revive && \
     apt-get remove -y ninja-build && \
     rm -rf /usr/local/share/cmake-3.20
+
+# generic ci | install zepter
+RUN cargo install zepter --locked --version 0.15.0
+
+RUN cargo install --git https://github.com/paritytech/cargo-contract \
+    --locked --branch cmichi-remove-wasm-default-to-revive
+
+RUN cargo install subkey
+
+# Download the `substrate-contracts-node` binary in a version that is compatible
+# to the `ink` master.
+RUN cargo install --git https://github.com/use-ink/substrate-contracts-node \
+    --rev fad777f53ba2fcf8a90646a5c516015c63ad24be --force
 
 # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
 # We require `xargo` so that `miri` runs properly
