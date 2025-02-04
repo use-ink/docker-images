@@ -103,7 +103,7 @@ RUN apt-get install -y --no-install-recommends clang lld && \
 RUN cargo install zepter --locked --version 1.5.1
 
 RUN cargo install --git https://github.com/paritytech/cargo-contract \
-    --locked --branch cmichi-remove-wasm-default-to-revive
+    --locked --branch master
 
 RUN cargo install subkey
 
