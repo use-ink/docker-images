@@ -52,8 +52,9 @@ RUN wget "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh_${
     dpkg -i "gh_${GH_TOOL_VERSION}_linux_amd64.deb" && rm "gh_${GH_TOOL_VERSION}_linux_amd64.deb"
 
 # generic ci | install stable rust
+# llvm-tools-preview is for grcov
 RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal\
-      --component rustfmt clippy rust-src && \
+      --component rustfmt clippy rust-src llvm-tools-preview && \
     rustup default "${RUST_STABLE_VERSION}"
 
 # generic ci | "alias" pinned stable toolchain as generic stable
@@ -99,7 +100,7 @@ RUN apt-get install -y --no-install-recommends clang lld && \
     rm -rf /usr/local/share/cmake-3.20
 
 # generic ci | install zepter
-RUN cargo install zepter --locked --version 0.15.0
+RUN cargo install zepter --locked --version 1.5.1
 
 RUN cargo install --git https://github.com/paritytech/cargo-contract \
     --locked --branch cmichi-remove-wasm-default-to-revive
@@ -116,13 +117,13 @@ RUN cargo install --git https://github.com/use-ink/substrate-contracts-node \
 RUN	cargo install grcov rust-covfix xargo
 
 # codecov
-RUN	cargo +nightly-${RUST_NIGHTLY_VERSION} install grcov rust-covfix xargo dylint-link
+RUN cargo +nightly-${RUST_NIGHTLY_VERSION} install grcov rust-covfix xargo dylint-link
 RUN curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --import
 
 # codecov uploader
 ARG CODECOV_UPLOADER_VERSION="v0.7.3"
 
-RUN	curl --remote-name --silent https://uploader.codecov.io/${CODECOV_UPLOADER_VERSION}/linux/codecov && \
+RUN curl --remote-name --silent https://uploader.codecov.io/${CODECOV_UPLOADER_VERSION}/linux/codecov && \
     curl --remote-name --silent https://uploader.codecov.io/${CODECOV_UPLOADER_VERSION}/linux/codecov.SHA256SUM && \
     curl --remote-name --silent https://uploader.codecov.io/${CODECOV_UPLOADER_VERSION}/linux/codecov.SHA256SUM.sig && \
     gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM && \
