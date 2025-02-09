@@ -82,6 +82,12 @@ RUN cargo install cargo-spellcheck --locked
 
 RUN cargo install cargo-nextest --locked
 
+RUN git clone https://github.com/paritytech/polkadot-sdk.git --depth 200 && \
+    cd polkadot-sdk/ && \
+    git reset --hard 645878a27115db52e5d63115699b4bbb89034067 && \
+    cargo install --path substrate/frame/revive/rpc --locked && \
+    cd ../ && rm -rf polkadot-sdk/
+
 # Install paritytech/revive with its dependencies
 RUN apt-get install -y --no-install-recommends clang lld && \
     curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc && \
@@ -89,13 +95,15 @@ RUN apt-get install -y --no-install-recommends clang lld && \
     wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
       tar --strip-components=1 -xz -C /usr/local && \
     apt-get install -y --no-install-recommends ninja-build && \
-    git clone https://github.com/paritytech/revive.git --depth 1 && \
+    git clone https://github.com/paritytech/revive.git && \
     cd revive && \
-    make install-llvm && \
-    export LLVM_SYS_181_PREFIX=${PWD}/target-llvm/gnu/target-final && \
-    make install-bin && \
+    # this hash is closest to the one from `polakdot-sdk` on Jan 7th
+    git reset --hard fde9edab106d3d59749232803718a5da606b360f && \
+    bash build-llvm.sh && \
+    export PATH=${PWD}/llvm18.0/bin:$PATH && \
+    export PATH=/builds/revive/llvm18.0/bin/:$PATH && \
+    make install-bin && cd ../ && rm -rf revive && \
     resolc --version && \
-    cd ../ && rm -rf revive && \
     apt-get remove -y ninja-build && \
     rm -rf /usr/local/share/cmake-3.20
 
