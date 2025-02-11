@@ -107,6 +107,11 @@ RUN apt-get install -y --no-install-recommends clang lld && \
     apt-get remove -y ninja-build && \
     rm -rf /usr/local/share/cmake-3.20
 
+# Install Node.js 22.x. Used for testing revive with hardhat.
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    node -v && npm -v && npx -v
+
 # generic ci | install zepter
 RUN cargo install zepter --locked --version 1.5.1
 
