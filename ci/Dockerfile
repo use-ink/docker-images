@@ -95,15 +95,13 @@ RUN apt-get install -y --no-install-recommends clang lld && \
     wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
       tar --strip-components=1 -xz -C /usr/local && \
     apt-get install -y --no-install-recommends ninja-build && \
-    git clone https://github.com/paritytech/revive.git && \
+    git clone https://github.com/paritytech/revive.git --depth 1 && \
     cd revive && \
-    # this hash is closest to the one from `polakdot-sdk` on Jan 7th
-    git reset --hard fde9edab106d3d59749232803718a5da606b360f && \
-    bash build-llvm.sh && \
-    export PATH=${PWD}/llvm18.0/bin:$PATH && \
-    export PATH=/builds/revive/llvm18.0/bin/:$PATH && \
-    make install-bin && cd ../ && rm -rf revive && \
+    make install-llvm && \
+    export LLVM_SYS_181_PREFIX=${PWD}/target-llvm/gnu/target-final && \
+    make install-bin && \
     resolc --version && \
+    cd ../ && rm -rf revive && \
     apt-get remove -y ninja-build && \
     rm -rf /usr/local/share/cmake-3.20
 
