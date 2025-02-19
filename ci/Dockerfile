@@ -64,7 +64,7 @@ RUN ln -s "/usr/local/rustup/toolchains/${RUST_STABLE_VERSION}-x86_64-unknown-li
 RUN rustup target add riscv64imac-unknown-none-elf
 
 # needed for contracts node
-RUN rustup target add wasm32-unknown-unknown
+RUN rustup target add wasm32v1-none
 
 # generic ci | install specific rust nightly, default is stable, use minimum components
 RUN rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
@@ -120,10 +120,9 @@ RUN cargo install --git https://github.com/paritytech/cargo-contract \
 
 RUN cargo install subkey
 
-# Download the `substrate-contracts-node` binary in a version that is compatible
-# to the `ink` master.
+# Install `substrate-contracts-node` in a version that is compatible with `ink` master.
 RUN cargo install --git https://github.com/use-ink/substrate-contracts-node \
-    --rev fad777f53ba2fcf8a90646a5c516015c63ad24be --force --locked
+    --rev 2a280a627aa2b50a7c67cf3c9183bcd28cc6380f --force --locked
 
 # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
 # We require `xargo` so that `miri` runs properly
