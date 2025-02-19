@@ -1,4 +1,4 @@
-[target.wasm32-unknown-unknown]
+[target.wasm32v1-none]
 # use clang as linker
 linker="clang-REPLACEME"
 
