@@ -19,9 +19,6 @@ ENV SHELL=/bin/bash \
 RUN groupadd -g 1000 nonroot && \
     useradd -u 1000 -g 1000 -s /bin/bash -m nonroot
 
-COPY ci/cargo-config /root/.cargo/config
-COPY ci/cargo-config /home/nonroot/.cargo/config
-
 # base | install tools and dependencies
 RUN set -eux; \
     apt-get -y update; \
