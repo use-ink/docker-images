@@ -120,7 +120,7 @@ RUN cargo install subkey
 
 # Install `substrate-contracts-node` in a version that is compatible with `ink` master.
 RUN cargo install --git https://github.com/use-ink/substrate-contracts-node \
-    --rev 2a280a627aa2b50a7c67cf3c9183bcd28cc6380f --force --locked
+    --branch upstream-master --force --locked
 
 # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
 # We require `xargo` so that `miri` runs properly
