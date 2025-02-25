@@ -1,7 +1,7 @@
 FROM docker.io/library/debian:stable-slim
 
 ### meta ###
-ENV RUST_STABLE_VERSION=1.84.0 \
+ENV RUST_STABLE_VERSION=1.85.0 \
     RUST_NIGHTLY_VERSION=2024-11-28
 
 WORKDIR /builds
