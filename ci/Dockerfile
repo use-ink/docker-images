@@ -79,7 +79,7 @@ RUN cargo install cargo-spellcheck --locked
 
 RUN cargo install cargo-nextest --locked
 
-RUN git clone https://github.com/paritytech/polkadot-sdk.git --depth 200 && \
+RUN git clone https://github.com/paritytech/polkadot-sdk.git --depth 50 && \
     cd polkadot-sdk/ && \
     git reset --hard 4a400dc1866f11707331fb6408df1055d0f42a70 && \
     cargo install --path substrate/frame/revive/rpc --locked && \
