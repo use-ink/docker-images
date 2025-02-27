@@ -81,7 +81,7 @@ RUN cargo install cargo-nextest --locked
 
 RUN git clone https://github.com/paritytech/polkadot-sdk.git --depth 200 && \
     cd polkadot-sdk/ && \
-    git reset --hard 934c091421af4be362839996bfaa441ba59bf12b && \
+    git reset --hard 4a400dc1866f11707331fb6408df1055d0f42a70 && \
     cargo install --path substrate/frame/revive/rpc --locked && \
     cd ../ && rm -rf polkadot-sdk/
 
