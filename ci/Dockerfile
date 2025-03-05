@@ -50,9 +50,9 @@ RUN wget "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh_${
 
 # generic ci | install stable rust
 # llvm-tools-preview is for grcov
-RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal\
-      --component rustfmt clippy rust-src llvm-tools-preview && \
-    rustup default "${RUST_STABLE_VERSION}"
+RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal && \
+    rustup default "${RUST_STABLE_VERSION}" && \
+    rustup component add rustfmt clippy rust-src llvm-tools-preview
 
 # generic ci | "alias" pinned stable toolchain as generic stable
 RUN ln -s "/usr/local/rustup/toolchains/${RUST_STABLE_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/stable-x86_64-unknown-linux-gnu
