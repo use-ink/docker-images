@@ -50,8 +50,8 @@ RUN wget "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh_${
 
 # generic ci | install stable rust
 # llvm-tools-preview is for grcov
-RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal\
-      --component rustfmt clippy rust-src llvm-tools-preview && \
+RUN rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal \
+      --component rustfmt,clippy,rust-src,llvm-tools-preview && \
     rustup default "${RUST_STABLE_VERSION}"
 
 # generic ci | "alias" pinned stable toolchain as generic stable
@@ -65,7 +65,7 @@ RUN rustup target add wasm32v1-none
 
 # generic ci | install specific rust nightly, default is stable, use minimum components
 RUN rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
-    --component rustfmt clippy rust-analyzer llvm-tools rustc-dev \
+    --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev \
     rust-src llvm-tools-preview
 
 # generic ci | "alias" pinned nightly toolchain as generic nightly
