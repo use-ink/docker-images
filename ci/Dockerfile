@@ -65,8 +65,7 @@ RUN rustup target add wasm32v1-none
 
 # generic ci | install specific rust nightly, default is stable, use minimum components
 RUN rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
-    --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev \
-    rust-src llvm-tools-preview
+    --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview
 
 # generic ci | "alias" pinned nightly toolchain as generic nightly
 RUN ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu
