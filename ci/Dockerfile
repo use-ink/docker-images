@@ -80,7 +80,7 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
         --branch upstream-master --force --locked && \
     git clone https://github.com/paritytech/polkadot-sdk.git --depth 50 && \
     cd polkadot-sdk/ && \
-    git reset --hard 9adb8d28ab1f6744f1fb26db41f42361ac1254a0 && \
+    git reset --hard f8c90b2a01ec77579bccd21ae17bd6ff2eeffd6a && \
     cargo install --path substrate/frame/revive/rpc --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
     rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
