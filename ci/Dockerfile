@@ -63,13 +63,17 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     # generic ci | install specific rust nightly, default is stable, use minimum components
     rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
     --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
-    rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
+    #rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
+    rustup toolchain install "nightly" --profile minimal \
+    --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
     # generic ci | "alias" pinned nightly toolchain as generic nightly
-    ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu && \
+    #ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu && \
+    rustup target add riscv64imac-unknown-none-elf \
+        --toolchain "nightly" && \
     rustup target add riscv64imac-unknown-none-elf \
         --toolchain "nightly-${RUST_NIGHTLY_VERSION}" && \
     rustup run nightly-${RUST_NIGHTLY_VERSION} cargo install cargo-dylint dylint-link && \
-    rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
+    #rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
     cargo install cargo-spellcheck --locked && \
     cargo install cargo-nextest --locked && \
     cargo install subkey && \
@@ -83,12 +87,12 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     git reset --hard f8c90b2a01ec77579bccd21ae17bd6ff2eeffd6a && \
     cargo install --path substrate/frame/revive/rpc --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
-    rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
+    #rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
     # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
     # We require `xargo` so that `miri` runs properly
     cargo install grcov rust-covfix xargo && \
     # codecov
-    cargo +nightly-${RUST_NIGHTLY_VERSION} install grcov rust-covfix xargo dylint-link && \
+    cargo +nightly install grcov rust-covfix xargo dylint-link && \
     curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --import && \
     # Install paritytech/revive with its dependencies
     apt-get install -y --no-install-recommends clang lld && \
