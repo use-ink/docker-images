@@ -2,7 +2,8 @@ FROM docker.io/library/debian:stable-slim
 
 ### meta ###
 ENV RUST_STABLE_VERSION=1.85.0 \
-    RUST_NIGHTLY_VERSION=2025-02-20
+    RUST_NIGHTLY_VERSION=2025-02-20 \
+    POLKADOT_SDK_HASH=28a7ae71cc0eac747bf346804279217a68f700da
 
 WORKDIR /builds
 
@@ -62,32 +63,28 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     rustup target add wasm32v1-none && \
     # generic ci | install specific rust nightly, default is stable, use minimum components
     rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
-    --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
-    #rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
+      --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
     rustup toolchain install "nightly" --profile minimal \
-    --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
+      --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
     # generic ci | "alias" pinned nightly toolchain as generic nightly
-    #ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu && \
     rustup target add riscv64imac-unknown-none-elf \
-        --toolchain "nightly" && \
+      --toolchain "nightly" && \
     rustup target add riscv64imac-unknown-none-elf \
-        --toolchain "nightly-${RUST_NIGHTLY_VERSION}" && \
+      --toolchain "nightly-${RUST_NIGHTLY_VERSION}" && \
     rustup run nightly-${RUST_NIGHTLY_VERSION} cargo install cargo-dylint dylint-link && \
-    #rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
     cargo install cargo-spellcheck --locked && \
     cargo install cargo-nextest --locked && \
     cargo install subkey && \
     cargo install zepter --locked --version 1.5.1 && \
     cargo install --git https://github.com/paritytech/cargo-contract \
-        --locked --branch master && \
+      --locked --branch master && \
     cargo install --git https://github.com/use-ink/substrate-contracts-node \
-        --branch upstream-master --force --locked && \
+      --branch upstream-master --force --locked && \
     git clone https://github.com/paritytech/polkadot-sdk.git --depth 50 && \
     cd polkadot-sdk/ && \
-    git reset --hard f8c90b2a01ec77579bccd21ae17bd6ff2eeffd6a && \
+    git reset --hard ${POLKADOT_SDK_HASH} && \
     cargo install --path substrate/frame/revive/rpc --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
-    #rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
     # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
     # We require `xargo` so that `miri` runs properly
     cargo install grcov rust-covfix xargo && \
