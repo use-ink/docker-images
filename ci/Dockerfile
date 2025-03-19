@@ -78,8 +78,8 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     cargo install zepter --locked --version 1.5.1 && \
     cargo install --git https://github.com/paritytech/cargo-contract \
       --locked --branch master && \
-    cargo install --git https://github.com/use-ink/substrate-contracts-node \
-      --branch upstream-master --force --locked && \
+    cargo install --git https://github.com/use-ink/ink-node \
+      --branch main --force --locked && \
     git clone https://github.com/paritytech/polkadot-sdk.git --depth 50 && \
     cd polkadot-sdk/ && \
     git reset --hard ${POLKADOT_SDK_HASH} && \
