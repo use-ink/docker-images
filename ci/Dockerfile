@@ -76,14 +76,19 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     rustup run nightly-${RUST_NIGHTLY_VERSION} cargo install cargo-dylint dylint-link && \
     cargo install cargo-spellcheck --locked && \
     cargo install cargo-nextest --locked && \
-    cargo install subkey && \
+    echo "----1" && \
+    cargo +nightly install subkey && \
     cargo install zepter --locked --version 1.5.1 && \
+    echo "---0" && \
     cargo install --git https://github.com/paritytech/cargo-contract \
       --locked --branch master && \
+    echo "---1" && \
     git clone https://github.com/paritytech/polkadot-sdk.git --depth 50 && \
     cd polkadot-sdk/ && \
     git reset --hard ${POLKADOT_SDK_HASH} && \
-    cargo install --path substrate/frame/revive/rpc --locked && \
+    echo "---2" && \
+    cargo +nightly install --path substrate/frame/revive/rpc --locked && \
+    echo "---3" && \
     cd ../ && rm -rf polkadot-sdk/ && \
     # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
     # We require `xargo` so that `miri` runs properly
