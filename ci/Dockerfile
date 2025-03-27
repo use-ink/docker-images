@@ -59,8 +59,10 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     ln -s "/usr/local/rustup/toolchains/${RUST_STABLE_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/stable-x86_64-unknown-linux-gnu && \
     # generic ci | install asm toolchain for the default stable toolchain
     rustup target add riscv64imac-unknown-none-elf && \
-    # needed for contracts node
-    rustup target add wasm32v1-none && \
+    # needed for `ink-node`
+    rustup target add wasm32v1-none --toolchain "nightly" && \
+    cargo install --git https://github.com/use-ink/ink-node \
+      --branch main --force --locked && \
     # generic ci | install specific rust nightly, default is stable, use minimum components
     rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
       --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
@@ -78,8 +80,6 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     cargo install zepter --locked --version 1.5.1 && \
     cargo install --git https://github.com/paritytech/cargo-contract \
       --locked --branch master && \
-    cargo install --git https://github.com/use-ink/ink-node \
-      --branch main --force --locked && \
     git clone https://github.com/paritytech/polkadot-sdk.git --depth 50 && \
     cd polkadot-sdk/ && \
     git reset --hard ${POLKADOT_SDK_HASH} && \
