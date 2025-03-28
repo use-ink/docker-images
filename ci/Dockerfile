@@ -77,7 +77,7 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     cargo install cargo-spellcheck --locked && \
     cargo install cargo-nextest --locked && \
     echo "----1" && \
-    cargo +nightly install subkey && \
+    #cargo +nightly install subkey && \
     cargo install zepter --locked --version 1.5.1 && \
     echo "---0" && \
     cargo install --git https://github.com/paritytech/cargo-contract \
@@ -87,6 +87,7 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     cd polkadot-sdk/ && \
     git reset --hard ${POLKADOT_SDK_HASH} && \
     echo "---2" && \
+    cargo +nightly install --path substrate/bin/utils/subkey --locked && \
     cargo +nightly install --path substrate/frame/revive/rpc --locked && \
     echo "---3" && \
     cd ../ && rm -rf polkadot-sdk/ && \
