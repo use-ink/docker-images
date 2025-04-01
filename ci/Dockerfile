@@ -59,9 +59,8 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     # generic ci | install asm toolchain for the default stable toolchain
     rustup target add riscv64imac-unknown-none-elf && \
     # needed for `ink-node`
-    rustup target add wasm32v1-none --toolchain "nightly" && \
-    cargo +nightly install --git https://github.com/use-ink/ink-node \
-      --branch main --force --locked && \
+    rustup target add wasm32v1-none && \
+    cargo install --git https://github.com/use-ink/ink-node --branch main --force --locked && \
     # generic ci | install specific rust nightly, default is stable, use minimum components
     rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
       --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
