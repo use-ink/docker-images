@@ -64,12 +64,12 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     # generic ci | install specific rust nightly, default is stable, use minimum components
     rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
       --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
-    rustup toolchain install "nightly-2025-03-01" --profile minimal \
+    rustup toolchain install "nightly" --profile minimal \
       --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
     # generic ci | "alias" pinned nightly toolchain as generic nightly
     rustup target add riscv64imac-unknown-none-elf \
-      --toolchain "nightly-2025-03-01" && \
-    rustup default nightly-2025-03-01 && \
+      --toolchain "nightly" && \
+    rustup default nightly && \
     rustup target add riscv64imac-unknown-none-elf \
       --toolchain "nightly-${RUST_NIGHTLY_VERSION}" && \
     rustup run nightly-${RUST_NIGHTLY_VERSION} cargo install cargo-dylint dylint-link && \
