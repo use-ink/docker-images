@@ -90,24 +90,14 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     # codecov
     cargo +nightly install grcov rust-covfix xargo dylint-link && \
     curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --import && \
-    # Install paritytech/revive with its dependencies
-    apt-get install -y --no-install-recommends clang lld && \
-    curl -L https://github.com/ethereum/solidity/releases/download/v0.8.28/solc-static-linux > /usr/bin/solc && \
-    chmod u+x /usr/bin/solc && \
-    wget -qO- "https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.tar.gz" | \
-      tar --strip-components=1 -xz -C /usr/local && \
-    apt-get install -y --no-install-recommends ninja-build && \
-    git clone https://github.com/paritytech/revive.git --depth 1 && \
-    cd revive && \
-    make install-llvm && \
-    export LLVM_SYS_181_PREFIX=${PWD}/target-llvm/gnu/target-final && \
-    make install-bin && \
-    resolc --version && \
-    cd ../ && rm -rf revive && \
-    apt-get remove -y ninja-build && \
-    rm -rf /usr/local/share/cmake-3.20
+    # Download the binary release of `paritytech/revive`
+    curl -L https://github.com/paritytech/revive/releases/download/v0.1.0-dev.12/resolc-x86_64-unknown-linux-musl.tar.gz > resolc.tar.gz && \
+    tar -xvzf resolc.tar.gz && \
+    rm resolc.tar.gz && \
+    chmod +x resolc-x86_64-unknown-linux-musl && \
+    mv resolc-x86_64-unknown-linux-musl /usr/local/bin/resolc
 
-# Install Node.js 22.x. Used for testing revive with hardhat.
+# Install node.js 22.x. Used for testing revive with hardhat.
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
     node -v && npm -v && npx -v && \
