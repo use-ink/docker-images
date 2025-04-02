@@ -85,8 +85,7 @@ RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/r
     cargo +nightly install --path substrate/frame/revive/rpc --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
     # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
-    # We require `xargo` so that `miri` runs properly
-    cargo install grcov rust-covfix xargo && \
+    cargo install grcov rust-covfix && \
     # codecov
     cargo +nightly install grcov rust-covfix xargo dylint-link && \
     curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --import && \
