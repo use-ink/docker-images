@@ -131,7 +131,6 @@ RUN curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov && \
 
 # finalize | apt clean up
 RUN rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
-    apt-get remove -y python3 && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* \
