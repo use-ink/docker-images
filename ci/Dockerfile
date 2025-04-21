@@ -1,9 +1,10 @@
 FROM docker.io/library/debian:stable-slim
 
 ### meta ###
-ENV RUST_STABLE_VERSION=1.85.0 \
+ENV RUST_STABLE_VERSION=1.86.0 \
+    # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
     RUST_NIGHTLY_VERSION=2025-02-20 \
-    POLKADOT_SDK_HASH=c6249dca5928c12c35c577b971277d4211c928b7
+    POLKADOT_SDK_BRANCH=stable2503
 
 WORKDIR /builds
 
@@ -13,6 +14,9 @@ ENV SHELL=/bin/bash \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH \
     RUST_BACKTRACE=1
+
+ARG TARGETARCH
+ENV ARCH=$TARGETARCH
 
 ### base ###
 
@@ -31,80 +35,91 @@ RUN set -eux; \
     # needed for `paritytech/revive`
     libtinfo-dev \
     # needed for `cargo-spellcheck`
-    libclang-dev
+    libclang-dev && \
+    # base | clean up layer
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man /usr/local/doc /usr/lib/llvm-11 /tmp/* /var/tmp/*
 
 ### generic ci ####
 
 ARG GH_TOOL_VERSION="2.54.0"
 
-RUN wget "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh_${GH_TOOL_VERSION}_linux_amd64.deb" && \
-    dpkg -i "gh_${GH_TOOL_VERSION}_linux_amd64.deb" && rm "gh_${GH_TOOL_VERSION}_linux_amd64.deb"
+RUN wget "https://github.com/cli/cli/releases/download/v${GH_TOOL_VERSION}/gh_${GH_TOOL_VERSION}_linux_${TARGETARCH}.deb" && \
+    dpkg -i "gh_${GH_TOOL_VERSION}_linux_${TARGETARCH}.deb" && \
+    rm "gh_${GH_TOOL_VERSION}_linux_${TARGETARCH}.deb"
 
-# generic ci | install stable rust
+# generic ci | install rust toolchains
 # llvm-tools-preview is for grcov
 # base | install rustup, use minimum components
-RUN curl -L "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init" \
-    -o rustup-init && \
+RUN case ${TARGETARCH} in \
+        "amd64")  RUST_ARCH="x86_64"  ;; \
+        "arm64")  RUST_ARCH="aarch64" ;; \
+        *)        RUST_ARCH=${TARGETARCH} ;; \
+    esac && \
+    curl -L "https://static.rust-lang.org/rustup/dist/${RUST_ARCH}-unknown-linux-gnu/rustup-init" -o rustup-init && \
     chmod u+x rustup-init && \
     ./rustup-init -y --no-modify-path --default-toolchain none && \
     rm -f rustup-init && \
     chown -R root:nonroot ${RUSTUP_HOME} ${CARGO_HOME} && \
     chmod -R g+w ${RUSTUP_HOME} ${CARGO_HOME} && \
+    # generic ci | install specific stable version
     rustup toolchain install "${RUST_STABLE_VERSION}" --profile minimal \
       --component rustfmt,clippy,rust-src,llvm-tools-preview && \
     rustup default "${RUST_STABLE_VERSION}" && \
     rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
     # generic ci | "alias" pinned stable toolchain as generic stable
-    ln -s "/usr/local/rustup/toolchains/${RUST_STABLE_VERSION}-x86_64-unknown-linux-gnu" /usr/local/rustup/toolchains/stable-x86_64-unknown-linux-gnu && \
-    # generic ci | install asm toolchain for the default stable toolchain
-    rustup target add riscv64imac-unknown-none-elf && \
-    # needed for `ink-node`
-    rustup target add wasm32v1-none && \
-    cargo install --git https://github.com/use-ink/ink-node --branch main --force --locked && \
+    ln -s "/usr/local/rustup/toolchains/${RUST_STABLE_VERSION}-${RUST_ARCH}-unknown-linux-gnu" "/usr/local/rustup/toolchains/stable-${RUST_ARCH}-unknown-linux-gnu" && \
+    # generic ci | install asm toolchain for the default stable toolchain; `wasm32v1-none` for `ink-node`
+    rustup target add riscv64imac-unknown-none-elf wasm32v1-none && \
     # generic ci | install specific rust nightly, default is stable, use minimum components
     rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
       --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
-    rustup toolchain install "nightly" --profile minimal \
-      --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
-    # generic ci | "alias" pinned nightly toolchain as generic nightly
-    rustup target add riscv64imac-unknown-none-elf \
-      --toolchain "nightly" && \
+    # generic ci | "alias" pinned nightly toolchain as rolling nightly
+    ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-${RUST_ARCH}-unknown-linux-gnu" "/usr/local/rustup/toolchains/nightly-${RUST_ARCH}-unknown-linux-gnu" && \
+    # generic ci | install asm toolchain for the nightly toolchain
+    rustup target add riscv64imac-unknown-none-elf --toolchain "nightly" && \
+    # generic ci | set nightly as default
     rustup default nightly && \
-    rustup target add riscv64imac-unknown-none-elf \
-      --toolchain "nightly-${RUST_NIGHTLY_VERSION}" && \
-    rustup run nightly-${RUST_NIGHTLY_VERSION} cargo install cargo-dylint dylint-link && \
-    cargo install cargo-spellcheck --locked && \
-    cargo install cargo-nextest --locked && \
-    cargo install zepter --locked --version 1.5.1 && \
-    cargo install --git https://github.com/paritytech/cargo-contract \
-      --locked --branch master && \
-    git clone https://github.com/paritytech/polkadot-sdk.git --depth 50 && \
+    # generic ci | clean up layer
+    rm -rf "${RUSTUP_HOME}/downloads" "${RUSTUP_HOME}/tmp"
+
+# generic ci | install core packages
+RUN cargo +nightly install cargo-dylint dylint-link && \
+    cargo +stable install cargo-spellcheck cargo-nextest xargo --locked && \
+    cargo +stable install zepter --locked --version 1.5.1 && \
+    cargo +stable install --git https://github.com/use-ink/ink-node --branch main --force --locked && \
+    cargo +stable install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
+    git clone https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} --depth 1 && \
     cd polkadot-sdk/ && \
-    git reset --hard ${POLKADOT_SDK_HASH} && \
     cargo +nightly install --path substrate/bin/utils/subkey --locked && \
     cargo +nightly install --path substrate/frame/revive/rpc --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
     # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
-    cargo install grcov rust-covfix && \
-    # codecov
-    cargo +nightly install grcov rust-covfix xargo dylint-link && \
+    cargo +nightly install grcov rust-covfix --locked && \
     curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --import && \
     # Download the binary release of `paritytech/revive`
-    curl -L https://github.com/paritytech/revive/releases/download/v0.1.0-dev.12/resolc-x86_64-unknown-linux-musl.tar.gz > resolc.tar.gz && \
-    tar -xvzf resolc.tar.gz && \
-    rm resolc.tar.gz && \
-    chmod +x resolc-x86_64-unknown-linux-musl && \
-    mv resolc-x86_64-unknown-linux-musl /usr/local/bin/resolc
+    if [ "$TARGETARCH" = "amd64" ]; then \
+        curl -fsSL -O https://github.com/paritytech/revive/releases/download/v0.1.0-dev.13/resolc-x86_64-unknown-linux-musl && \
+        chmod +x resolc-x86_64-unknown-linux-musl && \
+        mv resolc-x86_64-unknown-linux-musl /usr/local/bin/resolc; \
+    else \
+        echo "Skipping x86_64 specific installation of resolc for $TARGETARCH"; \
+    fi && \
+    # generic ci | clean up layer
+    rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git"
 
 # Install node.js 22.x. Used for testing revive with hardhat.
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
     node -v && npm -v && npx -v && \
     apt-get autoremove -y && \
-    apt-get clean
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man
 
 # codecov uploader
 ARG CODECOV_UPLOADER_VERSION="v0.7.3"
+ARG CODECOV_CLI_VERSION="v0.6.0"
 
 RUN curl --remote-name --silent https://uploader.codecov.io/${CODECOV_UPLOADER_VERSION}/linux/codecov && \
     curl --remote-name --silent https://uploader.codecov.io/${CODECOV_UPLOADER_VERSION}/linux/codecov.SHA256SUM && \
@@ -113,12 +128,9 @@ RUN curl --remote-name --silent https://uploader.codecov.io/${CODECOV_UPLOADER_V
     shasum --algorithm 256 --check codecov.SHA256SUM && \
     chmod +x codecov && \
     mv codecov /usr/local/bin/codecov && \
-    rm -f codecov.SHA256SUM codecov.SHA256SUM.sig
-
-# codecov-cli
-ARG CODECOV_CLI_VERSION="v0.6.0"
-
-RUN curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov && \
+    rm -f codecov.SHA256SUM codecov.SHA256SUM.sig && \
+    # codecov-cli
+    curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov && \
     curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov.SHA256SUM && \
     curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov.SHA256SUM.sig && \
     gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM && \
@@ -126,14 +138,3 @@ RUN curl -Os https://cli.codecov.io/${CODECOV_CLI_VERSION}/linux/codecov && \
     chmod +x codecov && \
     mv codecov /usr/local/bin/codecovcli && \
     rm -f codecov.SHA256SUM codecov.SHA256SUM.sig
-
-### finalize ###
-
-# finalize | apt clean up
-RUN rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* \
-    rm -rf /usr/local/doc \
-    rm -rf /usr/lib/llvm-11 \
-    rm -rf /tmp/*
