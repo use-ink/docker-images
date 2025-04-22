@@ -79,17 +79,15 @@ RUN case ${TARGETARCH} in \
     ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-${RUST_ARCH}-unknown-linux-gnu" "/usr/local/rustup/toolchains/nightly-${RUST_ARCH}-unknown-linux-gnu" && \
     # generic ci | install asm toolchain for the nightly toolchain
     rustup target add riscv64imac-unknown-none-elf --toolchain "nightly" && \
-    # generic ci | set nightly as default
-    rustup default nightly && \
     # generic ci | clean up layer
     rm -rf "${RUSTUP_HOME}/downloads" "${RUSTUP_HOME}/tmp"
 
 # generic ci | install core packages
 RUN cargo +nightly install cargo-dylint dylint-link && \
-    cargo +stable install cargo-spellcheck cargo-nextest xargo --locked && \
-    cargo +stable install zepter --locked --version 1.5.1 && \
-    cargo +stable install --git https://github.com/use-ink/ink-node --branch main --force --locked && \
-    cargo +stable install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
+    cargo install cargo-spellcheck cargo-nextest xargo --locked && \
+    cargo install zepter --locked --version 1.5.1 && \
+    cargo install --git https://github.com/use-ink/ink-node --branch main --force --locked && \
+    cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     git clone https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} --depth 1 && \
     cd polkadot-sdk/ && \
     cargo +nightly install --path substrate/bin/utils/subkey --locked && \
