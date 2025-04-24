@@ -74,7 +74,7 @@ RUN case ${TARGETARCH} in \
     rustup target add riscv64imac-unknown-none-elf wasm32v1-none && \
     # generic ci | install specific rust nightly, default is stable, use minimum components
     rustup toolchain install "nightly-${RUST_NIGHTLY_VERSION}" --profile minimal \
-      --component rustfmt,clippy,rust-analyzer,llvm-tools,rustc-dev,rust-src,llvm-tools-preview && \
+      --component rustfmt,clippy,rust-analyzer,rustc-dev,rust-src,llvm-tools-preview && \
     # generic ci | "alias" pinned nightly toolchain as rolling nightly
     ln -s "/usr/local/rustup/toolchains/nightly-${RUST_NIGHTLY_VERSION}-${RUST_ARCH}-unknown-linux-gnu" "/usr/local/rustup/toolchains/nightly-${RUST_ARCH}-unknown-linux-gnu" && \
     # generic ci | install asm toolchain for the nightly toolchain
