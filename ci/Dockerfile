@@ -4,7 +4,8 @@ FROM docker.io/library/debian:stable-slim
 ENV RUST_STABLE_VERSION=1.86.0 \
     # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
     RUST_NIGHTLY_VERSION=2025-02-20 \
-    POLKADOT_SDK_BRANCH=stable2503
+    POLKADOT_SDK_BRANCH=stable2503 \
+    INK_NODE_VERSION=v0.43.2
 
 WORKDIR /builds
 
@@ -86,7 +87,7 @@ RUN case ${TARGETARCH} in \
 RUN cargo +nightly install cargo-dylint dylint-link && \
     cargo install cargo-spellcheck cargo-nextest xargo --locked && \
     cargo install zepter --locked --version 1.5.1 && \
-    cargo install --git https://github.com/use-ink/ink-node --branch main --force --locked && \
+    cargo install --git https://github.com/use-ink/ink-node --tag ${INK_NODE_VERSION} --force --locked && \
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     git clone https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} --depth 1 && \
     cd polkadot-sdk/ && \
