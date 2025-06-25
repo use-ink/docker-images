@@ -87,7 +87,11 @@ RUN case ${TARGETARCH} in \
 RUN cargo +nightly install cargo-dylint dylint-link && \
     cargo install cargo-spellcheck cargo-nextest xargo --locked && \
     cargo install zepter --locked --version 1.5.1 && \
-    cargo install --git https://github.com/use-ink/ink-node --tag ${INK_NODE_VERSION} --force --locked && \
+    # we are installing by cloning to make sure the lockfile
+    # is also respected for the runtimes
+    git clone https://github.com/use-ink/ink-node && \
+    cd ink-node/ && git checkout ${INK_NODE_VERSION} && \
+    cargo install --force --locked --path node/ && \
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     git clone https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} --depth 100 && \
     cd polkadot-sdk/ && \
