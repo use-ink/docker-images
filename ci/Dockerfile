@@ -4,7 +4,7 @@ FROM docker.io/library/debian:stable-slim
 ENV RUST_STABLE_VERSION=1.86.0 \
     # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
     RUST_NIGHTLY_VERSION=2025-02-20 \
-    POLKADOT_SDK_BRANCH=main \
+    POLKADOT_SDK_BRANCH=master \
     INK_NODE_VERSION=v0.43.3
 
 WORKDIR /builds
