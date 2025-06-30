@@ -4,8 +4,8 @@ FROM docker.io/library/debian:stable-slim
 ENV RUST_STABLE_VERSION=1.86.0 \
     # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
     RUST_NIGHTLY_VERSION=2025-02-20 \
-    POLKADOT_SDK_BRANCH=master \
-    INK_NODE_VERSION=v0.43.3
+    POLKADOT_SDK_BRANCH=stable2503 \
+    INK_NODE_VERSION=v0.43.2
 
 WORKDIR /builds
 
@@ -93,11 +93,8 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     cd ink-node/ && git checkout ${INK_NODE_VERSION} && \
     cargo install --force --locked --path node/ && \
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
-    git clone https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} --depth 100 && \
+    git clone https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} --depth 1 && \
     cd polkadot-sdk/ && \
-    # we temporarily use this commit of `polkadot-sdk`, as the current \
-    # `ink-node` release 0.43.3 is synced against it.
-    git checkout 3ff2859d78e2a4a7ff9afe855f7863e4ef650068 && \
     cargo +nightly install --path substrate/bin/utils/subkey --locked && \
     cargo +nightly install --path substrate/frame/revive/rpc --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
