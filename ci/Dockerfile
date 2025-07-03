@@ -94,13 +94,13 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     # install `ink-node` from `nightly` branch as `ink-node-nightly`
     git checkout nightly && \
     cargo install --force --locked --path node/ && \
-    mv ~/.cargo/bin/ink-node ~/.cargo/bin/ink-node-nightly && \
+    mv /usr/local/cargo/bin/ink-node /usr/local/cargo/bin/ink-node-nightly && \
     # …and then as `ink-node`
     git checkout ${INK_NODE_VERSION} && \
     cargo install --force --locked --path node/ && \
     # install `cargo-contract` from `nightly` branch as `cargo-contract-nightly`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch nightly && \
-    mv ~/.cargo/bin/cargo-contract ~/.cargo/bin/cargo-contract-nightly && \
+    mv  /usr/local/cargo/bin/cargo-contract /usr/local/cargo/bin/cargo-contract-nightly && \
     # …and then from `master`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     # install `polkadot-sdk`
