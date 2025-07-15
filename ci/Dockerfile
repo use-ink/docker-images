@@ -87,14 +87,11 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     cargo install cargo-spellcheck cargo-nextest xargo --locked && \
     cargo install zepter --locked --version 1.5.1 && \
     # Install `ink-node`
-    git clone https://github.com/use-ink/ink-node && \
-    cd ink-node/ && \
-    git checkout ${INK_NODE_VERSION} && \
-    cargo install --force --locked --path node/ && \
+    cargo install --force --locked --git https://github.com/use-ink/ink-node --branch main && \
     # Install `cargo-contract`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     # install `polkadot-sdk`
-    git clone --depth 1 https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} && \
+    git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/paritytech/polkadot-sdk.git && \
     cd polkadot-sdk/ && \
     cargo +nightly install --path substrate/bin/utils/subkey --locked && \
     cargo +nightly install --path substrate/frame/revive/rpc --locked && \
