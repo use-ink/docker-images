@@ -107,7 +107,7 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     cargo clean && \
     # install `polkadot-sdk`
-    git clone https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} --depth 1 && \
+    git clone --depth 1 https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} && \
     cd polkadot-sdk/ && \
     cargo +nightly install --path substrate/bin/utils/subkey --locked && \
     cargo +nightly install --path substrate/frame/revive/rpc --locked && \
