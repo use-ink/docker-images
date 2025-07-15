@@ -4,7 +4,7 @@ FROM docker.io/library/debian:stable-slim
 ENV RUST_STABLE_VERSION=1.86.0 \
     # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
     RUST_NIGHTLY_VERSION=2025-02-20 \
-    INK_NODE_VERSION=v0.43.2
+    INK_NODE_VERSION=main
 
 WORKDIR /builds
 
@@ -86,26 +86,13 @@ RUN case ${TARGETARCH} in \
 RUN cargo +nightly install cargo-dylint dylint-link && \
     cargo install cargo-spellcheck cargo-nextest xargo --locked && \
     cargo install zepter --locked --version 1.5.1 && \
-    # we are installing by cloning to make sure the lockfile
-    # is also respected for the runtimes
+    # Install `ink-node`
     git clone https://github.com/use-ink/ink-node && \
     cd ink-node/ && \
-    # install `ink-node` from `nightly` branch as `ink-node-nightly`
-    git checkout nightly && \
-    cargo install --force --locked --path node/ && \
-    cargo clean && \
-    mv /usr/local/cargo/bin/ink-node /usr/local/cargo/bin/ink-node-nightly && \
-    # …and then as `ink-node`
     git checkout ${INK_NODE_VERSION} && \
     cargo install --force --locked --path node/ && \
-    cargo clean && \
-    # install `cargo-contract` from `nightly` branch as `cargo-contract-nightly`
-    cargo install --git https://github.com/use-ink/cargo-contract --locked --branch nightly && \
-    cargo clean && \
-    mv  /usr/local/cargo/bin/cargo-contract /usr/local/cargo/bin/cargo-contract-nightly && \
-    # …and then from `master`
+    # Install `cargo-contract`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
-    cargo clean && \
     # install `polkadot-sdk`
     git clone --depth 1 https://github.com/paritytech/polkadot-sdk.git -b ${POLKADOT_SDK_BRANCH} && \
     cd polkadot-sdk/ && \
