@@ -91,7 +91,7 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     # cargo install --force --locked --git https://github.com/use-ink/ink-node --branch main && \
     curl -L https://github.com/use-ink/ink-node/releases/download/v0.44.0/ink-node-linux.tar.gz > ink-node-linux.tar.gz && \
     tar xzfv ink-node-linux.tar.gz && \
-    mv ink-node-linux /usr/local/cargo/bin/ink-node && \
+    mv ink-node-linux/ink-node /usr/local/cargo/bin/ink-node && \
     # Install `cargo-contract`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     # install `polkadot-sdk`
