@@ -93,6 +93,7 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     tar xzfv ink-node-linux.tar.gz && \
     mv ink-node-linux/ink-node /usr/local/cargo/bin/ && \
     mv ink-node-linux/eth-rpc /usr/local/cargo/bin/ && \
+    chmod +x /usr/local/cargo/bin/* && \
     # Install `cargo-contract`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch cmichi-release-6.0.0-alpha.2 && \
     # install `polkadot-sdk`
