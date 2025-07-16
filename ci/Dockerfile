@@ -3,6 +3,7 @@ FROM docker.io/library/debian:stable-slim
 ### meta ###
 ENV RUST_STABLE_VERSION=1.86.0 \
     # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
+    POLKADOT_SDK_BRANCH=master \
     RUST_NIGHTLY_VERSION=2025-02-20 \
     INK_NODE_VERSION=main
 
@@ -87,7 +88,10 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     cargo install cargo-spellcheck cargo-nextest xargo --locked && \
     cargo install zepter --locked --version 1.5.1 && \
     # Install `ink-node`
-    cargo install --force --locked --git https://github.com/use-ink/ink-node --branch main && \
+    # cargo install --force --locked --git https://github.com/use-ink/ink-node --branch main && \
+    curl -L https://github.com/use-ink/ink-node/releases/download/v0.44.0/ink-node-linux.tar.gz > ink-node-linux.tar.gz && \
+    tar xzfv ink-node-linux.tar.gz && \
+    mv ink-node-linux /usr/local/cargo/bin/ink-node && \
     # Install `cargo-contract`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     # install `polkadot-sdk`
