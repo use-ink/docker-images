@@ -1,7 +1,7 @@
 FROM docker.io/library/debian:stable-slim
 
 ### meta ###
-ENV RUST_STABLE_VERSION=1.88.0 \
+ENV RUST_STABLE_VERSION=1.87.0 \
     # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
     POLKADOT_SDK_BRANCH=master \
     RUST_NIGHTLY_VERSION=2025-05-14 \
