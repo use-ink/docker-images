@@ -89,12 +89,15 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     cargo install cargo-spellcheck cargo-nextest xargo --locked && \
     cargo install zepter --locked --version 1.5.1 && \
     # Install `ink-node`
-    # cargo install --force --locked --git https://github.com/use-ink/ink-node --branch main && \
-    curl -L https://github.com/use-ink/ink-node/releases/download/v0.44.0/ink-node-linux.tar.gz > ink-node-linux.tar.gz && \
-    tar xzfv ink-node-linux.tar.gz && \
-    mv ink-node-linux/ink-node /usr/local/cargo/bin/ && \
-    mv ink-node-linux/eth-rpc /usr/local/cargo/bin/ && \
-    chmod +x /usr/local/cargo/bin/* && \
+    # From git
+    cargo install --force --locked --git https://github.com/use-ink/ink-node --branch main && \
+    # From release binary
+    # curl -L https://github.com/use-ink/ink-node/releases/download/v0.44.0/ink-node-linux.tar.gz > ink-node-linux.tar.gz && \
+    # tar xzfv ink-node-linux.tar.gz && \
+    # mv ink-node-linux/ink-node /usr/local/cargo/bin/ && \
+    # mv ink-node-linux/eth-rpc /usr/local/cargo/bin/ && \
+    # chmod +x /usr/local/cargo/bin/* && \
+    #
     # Install `cargo-contract`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     # install `polkadot-sdk`
