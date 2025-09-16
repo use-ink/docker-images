@@ -2,8 +2,8 @@ FROM docker.io/library/debian:stable-slim
 
 ### meta ###
 ENV RUST_STABLE_VERSION=1.88.0 \
+    POLKADOT_SDK_BRANCH=pallet-revive-with-system-and-storage-precompiles \
     # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
-    POLKADOT_SDK_BRANCH=master \
     RUST_NIGHTLY_VERSION=2025-05-14 \
     INK_NODE_VERSION=main
 
@@ -101,7 +101,7 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     # Install `cargo-contract`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
     # install `polkadot-sdk`
-    git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/paritytech/polkadot-sdk.git && \
+    git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/use-ink/polkadot-sdk.git && \
     cd polkadot-sdk/ && \
     cargo +nightly install --path substrate/bin/utils/subkey --locked && \
     # cargo +nightly install --path substrate/frame/revive/rpc --locked && \
