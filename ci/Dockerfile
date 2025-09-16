@@ -33,7 +33,7 @@ RUN set -eux; \
     git pkg-config curl wget time rhash ca-certificates jq \
     lsof git-restore-mtime \
     bzip2 xz-utils zstd unzip gnupg protobuf-compiler \
-    gcc-riscv64-unknown-elf fd \
+    gcc-riscv64-unknown-elf fd-find \
     # needed for `paritytech/revive`
     libtinfo-dev \
     # needed for `cargo-spellcheck`
