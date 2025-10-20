@@ -85,7 +85,18 @@ RUN case ${TARGETARCH} in \
     rm -rf "${RUSTUP_HOME}/downloads" "${RUSTUP_HOME}/tmp"
 
 # generic ci | install core packages
-RUN cargo +nightly install cargo-dylint dylint-link && \
+RUN git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/paritytech/polkadot-sdk.git && \
+    cd polkadot-sdk/ && \
+    cd polkadot && cargo install --path polkadot/ --locked && cd .. && \
+    cargo install --path substrate/bin/utils/chain-spec-builder/Cargo.toml && \
+    cargo install --path cumulus/polkadot-parachain/Cargo.toml && \
+    cargo build --release --manifest-path cumulus/parachains/runtimes/assets/asset-hub-westend/Cargo.toml && \
+    export runtime=target/release/wbuild/asset-hub-westend-runtime/asset_hub_westend_runtime.wasm && \
+    chain-spec-builder -c "/dev/stdout" create --relay-chain "dev" --para-id 1000 -r $runtime named-preset development > ../westend.json && \
+    cargo install --path substrate/bin/utils/subkey --locked && \
+    # cargo +nightly install --path substrate/frame/revive/rpc --locked && \
+    cd ../ && rm -rf polkadot-sdk/ && \
+    cargo +nightly install cargo-dylint dylint-link && \
     cargo install cargo-spellcheck cargo-nextest xargo --locked && \
     cargo install zepter --locked --version 1.5.1 && \
     # Install `ink-node`
@@ -100,18 +111,6 @@ RUN cargo +nightly install cargo-dylint dylint-link && \
     #
     # Install `cargo-contract`
     cargo install --git https://github.com/use-ink/cargo-contract --locked --branch master && \
-    # install `polkadot-sdk`
-    git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/paritytech/polkadot-sdk.git && \
-    cd polkadot-sdk/ && \
-    cargo install --path substrate/bin/utils/subkey --locked && \
-    cd polkadot && cargo install --bin polkadot --locked && cd .. && \
-    cargo install --path substrate/bin/utils/chain-spec-builder/Cargo.toml && \
-    cargo install --path cumulus/polkadot-parachain/Cargo.toml && \
-    cargo build --release --manifest-path cumulus/parachains/runtimes/assets/asset-hub-westend/Cargo.toml && \
-    export runtime=target/release/wbuild/asset-hub-westend-runtime/asset_hub_westend_runtime.wasm && \
-    chain-spec-builder -c "/dev/stdout" create --relay-chain "dev" --para-id 1000 -r $runtime named-preset development > ../westend.json && \
-    # cargo +nightly install --path substrate/frame/revive/rpc --locked && \
-    cd ../ && rm -rf polkadot-sdk/ && \
     # We require `grcov` for coverage reporting and `rust-covfix` to improve it.
     cargo +nightly install grcov rust-covfix --locked && \
     curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --import && \
