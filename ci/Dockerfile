@@ -88,7 +88,9 @@ RUN case ${TARGETARCH} in \
 RUN git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/paritytech/polkadot-sdk.git && \
     cd polkadot-sdk/ && \
     cargo install --path polkadot/ --locked && \
+    cargo clean && \
     cargo install --path substrate/bin/utils/chain-spec-builder/ && \
+    cargo clean && \
     cargo install --path cumulus/polkadot-parachain/ && \
     cargo clean && \
     cargo build --release --manifest-path cumulus/parachains/runtimes/assets/asset-hub-westend/Cargo.toml && \
