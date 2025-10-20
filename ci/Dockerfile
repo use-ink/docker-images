@@ -90,9 +90,11 @@ RUN git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/parit
     cargo install --path polkadot/ --locked && \
     cargo install --path substrate/bin/utils/chain-spec-builder/ && \
     cargo install --path cumulus/polkadot-parachain/ && \
+    cargo clean && \
     cargo build --release --manifest-path cumulus/parachains/runtimes/assets/asset-hub-westend/Cargo.toml && \
     export runtime=target/release/wbuild/asset-hub-westend-runtime/asset_hub_westend_runtime.wasm && \
     chain-spec-builder -c "/dev/stdout" create --relay-chain "dev" --para-id 1000 -r $runtime named-preset development > ../westend.json && \
+    cargo clean && \
     cargo install --path substrate/bin/utils/subkey --locked && \
     # cargo +nightly install --path substrate/frame/revive/rpc --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
