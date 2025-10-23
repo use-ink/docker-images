@@ -87,22 +87,7 @@ RUN case ${TARGETARCH} in \
 # generic ci | install core packages
 RUN git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/paritytech/polkadot-sdk.git && \
     cd polkadot-sdk/ && \
-    cargo install --path polkadot/ --locked && \
-    rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
-    cargo clean && \
-    cargo install --path substrate/bin/utils/chain-spec-builder/ && \
-    cargo clean && \
-    rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
-    cargo install --path cumulus/polkadot-parachain/ && \
-    cargo clean && \
-    rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
-    cargo build --release --manifest-path cumulus/parachains/runtimes/assets/asset-hub-westend/Cargo.toml && \
-    export runtime=target/release/wbuild/asset-hub-westend-runtime/asset_hub_westend_runtime.wasm && \
-    chain-spec-builder -c "/dev/stdout" create --relay-chain "dev" --para-id 1000 -r $runtime named-preset development > ../westend.json && \
-    cargo clean && \
-    rm -rf "${CARGO_HOME}/registry" "${CARGO_HOME}/git" && \
     cargo install --path substrate/bin/utils/subkey --locked && \
-    # cargo +nightly install --path substrate/frame/revive/rpc --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
     cargo +nightly install cargo-dylint dylint-link && \
     cargo install cargo-spellcheck cargo-nextest xargo --locked && \
