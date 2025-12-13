@@ -89,7 +89,7 @@ RUN git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/parit
     cd polkadot-sdk/ && \
     cargo install --path substrate/bin/utils/subkey --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
-    cargo install cargo-dylint && \
+    cargo install cargo-dylint --locked && \
     cargo install dylint-link && \
     cargo install cargo-spellcheck cargo-nextest xargo --locked && \
     cargo install zepter --locked --version 1.5.1 && \
