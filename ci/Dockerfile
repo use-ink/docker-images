@@ -2,7 +2,7 @@ FROM docker.io/library/debian:stable-slim
 
 ### meta ###
 ENV RUST_STABLE_VERSION=1.88.0 \
-    POLKADOT_SDK_BRANCH=unstable2507 \
+    POLKADOT_SDK_COMMIT=cbab8ed4be1941420dd25dc81102fb79d8e2a7f0 \
     # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
     RUST_NIGHTLY_VERSION=2025-05-14
 
@@ -84,7 +84,7 @@ RUN case ${TARGETARCH} in \
     rm -rf "${RUSTUP_HOME}/downloads" "${RUSTUP_HOME}/tmp"
 
 # generic ci | install core packages
-RUN git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/paritytech/polkadot-sdk.git && \
+RUN git clone --depth 1 --rev ${POLKADOT_SDK_COMMIT} https://github.com/paritytech/polkadot-sdk.git && \
     cd polkadot-sdk/ && \
     cargo install --path substrate/bin/utils/subkey --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
