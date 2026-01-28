@@ -95,9 +95,9 @@ RUN git clone --depth 450 --branch master https://github.com/paritytech/polkadot
     cargo install zepter --locked --version 1.5.1 && \
     # Install `ink-node`
     # From git
-    cargo install --force --locked --git https://github.com/use-ink/ink-node --tag v0.47.0 && \
+    # cargo install --force --locked --git https://github.com/use-ink/ink-node --tag v0.47.0 && \
     # From release binary
-    # curl -L https://github.com/use-ink/ink-node/releases/download/v0.44.0/ink-node-linux.tar.gz > ink-node-linux.tar.gz && \
+    curl -L https://github.com/use-ink/ink-node/releases/download/v0.47.0/ink-node-linux.tar.gz > ink-node-linux.tar.gz && \
     # tar xzfv ink-node-linux.tar.gz && \
     # mv ink-node-linux/ink-node /usr/local/cargo/bin/ && \
     # mv ink-node-linux/eth-rpc /usr/local/cargo/bin/ && \
