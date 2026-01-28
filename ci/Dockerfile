@@ -84,14 +84,15 @@ RUN case ${TARGETARCH} in \
     rm -rf "${RUSTUP_HOME}/downloads" "${RUSTUP_HOME}/tmp"
 
 # generic ci | install core packages
-RUN git clone --depth 450 --branch master https://github.com/paritytech/polkadot-sdk.git && \
+RUN cargo install xargo --locked && \
+    git clone --depth 450 --branch master https://github.com/paritytech/polkadot-sdk.git && \
     cd polkadot-sdk/ && \
     git checkout ${POLKADOT_SDK_COMMIT} && \
     cargo install --path substrate/bin/utils/subkey --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
     cargo install cargo-dylint --locked && \
     cargo install dylint-link && \
-    cargo install cargo-spellcheck cargo-nextest xargo --locked && \
+    cargo install cargo-spellcheck cargo-nextest --locked && \
     cargo install zepter --locked --version 1.5.1 && \
     # Install `ink-node`
     # From git
