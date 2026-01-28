@@ -4,8 +4,7 @@ FROM docker.io/library/debian:stable-slim
 ENV RUST_STABLE_VERSION=1.88.0 \
     POLKADOT_SDK_BRANCH=unstable2507 \
     # restricted by https://github.com/trailofbits/dylint/blob/master/examples/general/rust-toolchain
-    RUST_NIGHTLY_VERSION=2025-05-14 \
-    INK_NODE_VERSION=main
+    RUST_NIGHTLY_VERSION=2025-05-14
 
 WORKDIR /builds
 
@@ -95,7 +94,7 @@ RUN git clone --depth 1 --branch ${POLKADOT_SDK_BRANCH} https://github.com/parit
     cargo install zepter --locked --version 1.5.1 && \
     # Install `ink-node`
     # From git
-    cargo install --force --locked --git https://github.com/use-ink/ink-node --branch main && \
+    cargo install --force --locked --git https://github.com/use-ink/ink-node --tag v0.47.0 && \
     # From release binary
     # curl -L https://github.com/use-ink/ink-node/releases/download/v0.44.0/ink-node-linux.tar.gz > ink-node-linux.tar.gz && \
     # tar xzfv ink-node-linux.tar.gz && \
