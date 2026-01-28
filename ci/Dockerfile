@@ -84,8 +84,9 @@ RUN case ${TARGETARCH} in \
     rm -rf "${RUSTUP_HOME}/downloads" "${RUSTUP_HOME}/tmp"
 
 # generic ci | install core packages
-RUN git clone --depth 1 --revision ${POLKADOT_SDK_COMMIT} https://github.com/paritytech/polkadot-sdk.git && \
+RUN git clone --depth 250 --branch master https://github.com/paritytech/polkadot-sdk.git && \
     cd polkadot-sdk/ && \
+    git checkout ${POLKADOT_SDK_COMMIT} && \
     cargo install --path substrate/bin/utils/subkey --locked && \
     cd ../ && rm -rf polkadot-sdk/ && \
     cargo install cargo-dylint --locked && \
